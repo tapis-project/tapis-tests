@@ -6,7 +6,8 @@
             "tenant":"test",
             "service_pass":"",
             "db":"StreamsTestDB",
-            "streams_pass":""
+            "streams_pass":"",
+            "system":"tapisv3-exec-testuser2-1"
 
        }
 }
