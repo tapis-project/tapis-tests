@@ -49,6 +49,7 @@ function load_config ( ) {
       streams_pass=`echo $CONFIG | jq -r '.dev.streams_pass'`
       tenant=`echo $CONFIG | jq -r '.dev.tenant'`
       admin_base_url=`echo $CONFIG | jq -r '.dev.admin_base'`
+      system=`echo $CONFIG | jq -r '.dev.system'`
 
       ;;
 
@@ -307,7 +308,7 @@ function smoke_tests() {
 				echo "------ "
 				header=`echo X-Tapis-token:$user_token`
 				echo "Test: List Files"
-				RESULT=`curl -o /dev/null -w '%{http_code}' -H "$header" $base_url/v3/files/ops/$system 2>/dev/null`
+				RESULT=`curl -o /dev/null -w '%{http_code}' -H "$header" $base_url/v3/files/ops/$system/ 2>/dev/null`
 				echo $RESULT
 	            num_of_tests=$((num_of_tests+1))
 	            if [ $RESULT = '200' ]; then
