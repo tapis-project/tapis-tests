@@ -1,0 +1,13 @@
+{
+       "dev":{
+            "base_url":"https://dev.test.tapis.io",
+            "pass":"",
+            "user":"",
+            "tenant":"test",
+            "service_pass":"",
+            "db":"StreamsTestDB",
+            "streams_pass":""
+
+       }
+}
+
