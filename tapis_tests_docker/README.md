@@ -1,15 +1,9 @@
 # tapis-tests
 
-1.To run Smoke Tests for all services run:
+This repo helps to run smoke tests in a docker container.
+1. Edit the config.json file before building and running the container.
+2. Build the image 
+docker build -t tapis/smoketests .
+3. Run tests
+docker run --rm tapis/smoketests 
 
-./tapisv3smoketests.sh -s all -tenant dev
-
-
-2. To run Smoketests for any particular service, for example: systems run:
-
-./tapisv3smoketests.sh -s systems -tenant dev
-
-
-3. To run tests in debug mode run:
-
-bash -x tapisv3smoketests.sh -s all -tenant dev
