@@ -331,8 +331,6 @@ function smoke_tests() {
 	            	echo "PASS"
 				else
 					num_of_tests_fail=$((num_of_tests_fail+1))
-					payload="{\"channel\": \"$channel\", \"username\": \"JenkinsBot\", \"text\": \" Reporting from $base_url List postits ($jenkins).\"}"
-					failure=`curl -X POST --data-urlencode "payload=$payload" https://tacc-team.slack.com/services/hooks/jenkins-ci/hJBbnMby7cl3HBmDGzxn41sF 2>/dev/null`
 					echo "FAIL"
 				fi
 				break
@@ -353,8 +351,26 @@ function smoke_tests() {
 	            	echo "PASS"
 				else
 					num_of_tests_fail=$((num_of_tests_fail+1))
-					payload="{\"channel\": \"$channel\", \"username\": \"JenkinsBot\", \"text\": \" Reporting from $base_url List pods ($jenkins).\"}"
-					failure=`curl -X POST --data-urlencode "payload=$payload" https://tacc-team.slack.com/services/hooks/jenkins-ci/hJBbnMby7cl3HBmDGzxn41sF 2>/dev/null`
+					echo "FAIL"
+				fi
+				break
+				;;
+               pgrest)
+				echo " "
+				echo "**********************************************************"
+				echo " "
+				echo "PgREST:"
+				echo "------ "
+				header=`echo X-Tapis-token:$user_token`
+				echo "Test: PgREST healthcheck"
+				RESULT=`curl -o /dev/null -w '%{http_code}' -H "$header" $base_url/v3/pgrest/healthcheck 2>/dev/null`
+				echo $RESULT
+	            num_of_tests=$((num_of_tests+1))
+	            if [ $RESULT = '200' ]; then
+	            	num_of_tests_pass=$((num_of_tests_pass+1))
+	            	echo "PASS"
+				else
+					num_of_tests_fail=$((num_of_tests_fail+1))
 					echo "FAIL"
 				fi
 				break
@@ -595,8 +611,6 @@ function smoke_tests() {
             		echo "PASS"
 				else
 					num_of_tests_fail=$((num_of_tests_fail+1))
-					payload="{\"channel\": \"$channel\", \"username\": \"JenkinsBot\", \"text\": \" Reporting from $base_url Workflows healthcheck test ($jenkins).\"}"
-					failure=`curl -X POST --data-urlencode "payload=$payload" https://tacc-team.slack.com/services/hooks/jenkins-ci/hJBbnMby7cl3HBmDGzxn41sF 2>/dev/null`
 					echo "FAIL"
 				fi
 				echo " "
@@ -612,8 +626,6 @@ function smoke_tests() {
             		echo "PASS"
 				else
 					num_of_tests_fail=$((num_of_tests_fail+1))
-					payload="{\"channel\": \"$channel\", \"username\": \"JenkinsBot\", \"text\": \" Reporting from $base_url Workflows get all groups ($jenkins).\"}"
-					failure=`curl -X POST --data-urlencode "payload=$payload" https://tacc-team.slack.com/services/hooks/jenkins-ci/hJBbnMby7cl3HBmDGzxn41sF 2>/dev/null`
 					echo "FAIL"
 				fi
 				echo " "
@@ -629,8 +641,6 @@ function smoke_tests() {
             		echo "PASS"
 				else
 					num_of_tests_fail=$((num_of_tests_fail+1))
-					payload="{\"channel\": \"$channel\", \"username\": \"JenkinsBot\", \"text\": \" Reporting from $base_url Workflows Retrieve group details test ($jenkins).\"}"
-					failure=`curl -X POST --data-urlencode "payload=$payload" https://tacc-team.slack.com/services/hooks/jenkins-ci/hJBbnMby7cl3HBmDGzxn41sF 2>/dev/null`
 					echo "FAIL"
 				fi
 				echo " "
@@ -646,8 +656,6 @@ function smoke_tests() {
             		echo "PASS"
 				else
 					num_of_tests_fail=$((num_of_tests_fail+1))
-					payload="{\"channel\": \"$channel\", \"username\": \"JenkinsBot\", \"text\": \" Reporting from $base_url Workflows list users test ($jenkins).\"}"
-					failure=`curl -X POST --data-urlencode "payload=$payload" https://tacc-team.slack.com/services/hooks/jenkins-ci/hJBbnMby7cl3HBmDGzxn41sF 2>/dev/null`
 					echo "FAIL"
 				fi
 				echo " "
@@ -663,8 +671,6 @@ function smoke_tests() {
             		echo "PASS"
 				else
 					num_of_tests_fail=$((num_of_tests_fail+1))
-					payload="{\"channel\": \"$channel\", \"username\": \"JenkinsBot\", \"text\": \" Reporting from $base_url Workflows list users test ($jenkins).\"}"
-					failure=`curl -X POST --data-urlencode "payload=$payload" https://tacc-team.slack.com/services/hooks/jenkins-ci/hJBbnMby7cl3HBmDGzxn41sF 2>/dev/null`
 					echo "FAIL"
 				fi
 				echo " "
@@ -680,8 +686,6 @@ function smoke_tests() {
             		echo "PASS"
 				else
 					num_of_tests_fail=$((num_of_tests_fail+1))
-					payload="{\"channel\": \"$channel\", \"username\": \"JenkinsBot\", \"text\": \" Reporting from $base_url Workflows list users test ($jenkins).\"}"
-					failure=`curl -X POST --data-urlencode "payload=$payload" https://tacc-team.slack.com/services/hooks/jenkins-ci/hJBbnMby7cl3HBmDGzxn41sF 2>/dev/null`
 					echo "FAIL"
 				fi
 				break
