@@ -577,6 +577,117 @@ function smoke_tests() {
 				;;
 				
 				#: If user inputs invalid service name
+				;;
+				workflows)
+				echo "  "
+				#echo "**********************************************************"
+				#echo " "
+				echo "Workflows: "
+				echo "-------- "
+				echo "Test: healthcheck"
+				header=`echo X-Tapis-token:$user_token`
+				RESULT=`curl -o /dev/null -w '%{http_code}' -H "$header" $base_url/v3/workflows/healthcheck 2>/dev/null`
+				echo $RESULT
+            	num_of_tests=$((num_of_tests+1))
+            	#echo $num_of_tests
+            	if [ $RESULT = '200' ]; then
+            		num_of_tests_pass=$((num_of_tests_pass+1))
+            		echo "PASS"
+				else
+					num_of_tests_fail=$((num_of_tests_fail+1))
+					payload="{\"channel\": \"$channel\", \"username\": \"JenkinsBot\", \"text\": \" Reporting from $base_url Workflows healthcheck test ($jenkins).\"}"
+					failure=`curl -X POST --data-urlencode "payload=$payload" https://tacc-team.slack.com/services/hooks/jenkins-ci/hJBbnMby7cl3HBmDGzxn41sF 2>/dev/null`
+					echo "FAIL"
+				fi
+				echo " "
+				echo "Test: get all groups"
+				header=`echo X-Tapis-token:$user_token`
+				RESULT=`curl -o /dev/null -w '%{http_code}' -H "$header"  $base_url/v3/workflows/groups 2>/dev/null`
+				echo $RESULT
+            	num_of_tests=$((num_of_tests+1))
+            	#echo $num_of_tests
+
+            	if [ $RESULT = '200' ]; then
+            		num_of_tests_pass=$((num_of_tests_pass+1))
+            		echo "PASS"
+				else
+					num_of_tests_fail=$((num_of_tests_fail+1))
+					payload="{\"channel\": \"$channel\", \"username\": \"JenkinsBot\", \"text\": \" Reporting from $base_url Workflows get all groups ($jenkins).\"}"
+					failure=`curl -X POST --data-urlencode "payload=$payload" https://tacc-team.slack.com/services/hooks/jenkins-ci/hJBbnMby7cl3HBmDGzxn41sF 2>/dev/null`
+					echo "FAIL"
+				fi
+				echo " "
+				echo "Test: Retrieve group details"
+				header=`echo X-Tapis-token:$user_token`
+				RESULT=`curl -o /dev/null -w '%{http_code}' -H "$header"  $base_url/v3/workflows/groups/$group_id 2>/dev/null`
+				echo $RESULT
+            	num_of_tests=$((num_of_tests+1))
+            	#echo $num_of_tests
+
+            	if [ $RESULT = '200' ]; then
+            		num_of_tests_pass=$((num_of_tests_pass+1))
+            		echo "PASS"
+				else
+					num_of_tests_fail=$((num_of_tests_fail+1))
+					payload="{\"channel\": \"$channel\", \"username\": \"JenkinsBot\", \"text\": \" Reporting from $base_url Workflows Retrieve group details test ($jenkins).\"}"
+					failure=`curl -X POST --data-urlencode "payload=$payload" https://tacc-team.slack.com/services/hooks/jenkins-ci/hJBbnMby7cl3HBmDGzxn41sF 2>/dev/null`
+					echo "FAIL"
+				fi
+				echo " "
+				echo "Test: List users from a group"
+				header=`echo X-Tapis-token:$user_token`
+				RESULT=`curl -o /dev/null -w '%{http_code}' -H "$header"  $base_url/v3/workflows/groups/$group_id/users 2>/dev/null`
+				echo $RESULT
+            	num_of_tests=$((num_of_tests+1))
+           		 #echo $num_of_tests
+
+            	if [ $RESULT = '200' ]; then
+            		num_of_tests_pass=$((num_of_tests_pass+1))
+            		echo "PASS"
+				else
+					num_of_tests_fail=$((num_of_tests_fail+1))
+					payload="{\"channel\": \"$channel\", \"username\": \"JenkinsBot\", \"text\": \" Reporting from $base_url Workflows list users test ($jenkins).\"}"
+					failure=`curl -X POST --data-urlencode "payload=$payload" https://tacc-team.slack.com/services/hooks/jenkins-ci/hJBbnMby7cl3HBmDGzxn41sF 2>/dev/null`
+					echo "FAIL"
+				fi
+				echo " "
+				header=`echo X-Tapis-token:$user_token`
+				echo "Test: List users identities for a given user"
+				RESULT=`curl -o /dev/null -w '%{http_code}' -H "$header"  $base_url/v3/workflows/groups/$group_id/users 2>/dev/null`
+				echo $RESULT
+            	num_of_tests=$((num_of_tests+1))
+           		 #echo $num_of_tests
+
+            	if [ $RESULT = '200' ]; then
+            		num_of_tests_pass=$((num_of_tests_pass+1))
+            		echo "PASS"
+				else
+					num_of_tests_fail=$((num_of_tests_fail+1))
+					payload="{\"channel\": \"$channel\", \"username\": \"JenkinsBot\", \"text\": \" Reporting from $base_url Workflows list users test ($jenkins).\"}"
+					failure=`curl -X POST --data-urlencode "payload=$payload" https://tacc-team.slack.com/services/hooks/jenkins-ci/hJBbnMby7cl3HBmDGzxn41sF 2>/dev/null`
+					echo "FAIL"
+				fi
+				echo " "
+				header=`echo X-Tapis-token:$user_token`
+				echo "Test: Retrieve a list of pipelines for all groups that the requesting user belongs to"
+				RESULT=`curl -o /dev/null -w '%{http_code}' -H "$header"  $base_url/v3/workflows/groups/$group_id/pipelines 2>/dev/null`
+				echo $RESULT
+            	num_of_tests=$((num_of_tests+1))
+           		 #echo $num_of_tests
+
+            	if [ $RESULT = '200' ]; then
+            		num_of_tests_pass=$((num_of_tests_pass+1))
+            		echo "PASS"
+				else
+					num_of_tests_fail=$((num_of_tests_fail+1))
+					payload="{\"channel\": \"$channel\", \"username\": \"JenkinsBot\", \"text\": \" Reporting from $base_url Workflows list users test ($jenkins).\"}"
+					failure=`curl -X POST --data-urlencode "payload=$payload" https://tacc-team.slack.com/services/hooks/jenkins-ci/hJBbnMby7cl3HBmDGzxn41sF 2>/dev/null`
+					echo "FAIL"
+				fi
+				break
+			;;
+		#: If user inputs invalid service name
+
 		*)
 			echo "  "
 			echo "**********************************************************"
@@ -593,7 +704,7 @@ function smoke_tests() {
 function parse_args() {
 
 	#: List Services contains names of all services, for which smoke tests will be run when user selects -s all or --service all
-	Services=("actors" "apps" "authenticator" "files" "jobs" "streams" "meta"  "pods" "postits" "sk"  "systems" "tenants" )
+	Services=("actors" "apps" "authenticator" "files" "jobs" "streams" "meta"  "pods" "postits" "sk"  "systems" "tenants" "workflows" )
 
 	#: List of tenants
 	Tenants=( "dev")
