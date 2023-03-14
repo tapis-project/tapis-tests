@@ -1,0 +1,15 @@
+{
+	"description": "Systems for testing large files transfers modified",
+	"systemType": "LINUX",
+	"owner": "testuser",
+	"host": "",
+	"effectiveUserId": "testuser",
+	"defaultAuthnMethod": "PKI_KEYS",
+	"authnCredential": {
+		"publicKey":"",
+		"privateKey":""
+	},
+	"rootDir": "/home/testuser",
+	"port": 22,
+	"canExec": false
+}

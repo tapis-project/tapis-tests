@@ -1,0 +1,12 @@
+{
+  "id":"tacc-sample-app-<userid>",
+  "version":"0.1",
+  "appType":"FORK",
+  "description":"My sample application",
+  "runtime":"DOCKER",
+  "containerImage":"docker.io/hello-world:latest",
+  "jobAttributes": {
+      "description": "default job description",
+      "execSystemId": "execsystem1"
+  }
+}

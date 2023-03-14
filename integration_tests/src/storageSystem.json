@@ -1,0 +1,19 @@
+{
+	"id": "",
+	"description": "Systems for testing jobs",
+	"systemType": "LINUX",
+	"owner": "",
+	"host": "",
+	"enabled": true,
+	"effectiveUserId": "",
+	"defaultAuthnMethod": "PKI_KEYS",
+	"authnCredential": {
+		"publicKey":"",
+		"privateKey":""
+	},
+	"rootDir": "",
+	"port": 22,
+	"canExec": true,
+	"jobRuntimes": [{"runtimeType": "DOCKER", "version": "0.0.1d"}],
+	"jobWorkingDir": "workdir"
+}

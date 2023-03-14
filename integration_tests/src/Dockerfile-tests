@@ -1,0 +1,26 @@
+ # image: tapis/pysdk-tests
+from python:3.7
+from tapis/flaskbase
+
+RUN pip uninstall -y tapipy
+RUN pip install tapipy
+RUN pip install pytest
+#RUN useradd tapis
+
+# install additional requirements for the service
+COPY requirements.txt /home/tapis/requirements.txt
+RUN pip install -r /home/tapis/requirements.txt
+
+#USER tapis
+WORKDIR /home/tapis
+
+ADD tapistests.py /home/tapis/tapistests.py
+ADD configschema.json /home/tapis/configschema.json
+ADD config-dev-develop.json /home/tapis/config.json
+ADD storageSystem.json /home/tapis/storageSystem.json
+ADD updateSystem.json /home/tapis/updateSystem.json
+ADD sample.txt /home/tapis/sample.txt
+ADD app.json /home/tapis/app.json
+
+ENTRYPOINT ["pytest", "--tb=no","tapistests.py"]
+
