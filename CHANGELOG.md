@@ -14,7 +14,7 @@ https://tapis-project.github.io/live-docs
 Incremental improvements.
 
 ### New features:
-- Postits, Workflows and Pods tests
+- Postits, PgREST, Workflows and Pods tests
 - Integration tests
 
 ---------------------------------------------------------------------------
