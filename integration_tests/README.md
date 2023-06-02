@@ -1,4 +1,4 @@
-Note: Before building the test image, open the src>storageSystem.json and add IP address for "host", one liner "publicKey" and "privateKey" and set the root directory to '/home/<userid>'
+Note: Before building the test image, open the src>storageSystem.json and add IP address for "host", one liner "publicKey" and "privateKey" and set the root directory to '/home/user_name'
 
 To run Tapis v3 integration tests
 docker build -t tapis/tapistests -f Dockerfile-tests . 
