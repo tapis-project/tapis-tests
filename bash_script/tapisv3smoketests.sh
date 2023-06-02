@@ -592,8 +592,7 @@ function smoke_tests() {
 				break
 				;;
 				
-				#: If user inputs invalid service name
-				;;
+				
 				workflows)
 				echo "  "
 				#echo "**********************************************************"
