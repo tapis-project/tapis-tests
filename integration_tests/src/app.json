@@ -7,6 +7,6 @@
   "containerImage":"docker.io/hello-world:latest",
   "jobAttributes": {
       "description": "default job description",
-      "execSystemId": "execsystem1"
+      "execSystemId": "<Enter execution system id>"
   }
 }

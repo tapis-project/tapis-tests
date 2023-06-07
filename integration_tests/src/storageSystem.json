@@ -1,19 +1,18 @@
 {
-	"id": "",
+	"id": "test-system-id",
 	"description": "Systems for testing jobs",
 	"systemType": "LINUX",
-	"owner": "",
-	"host": "",
+	"host": "<Enter IP address of virtual machine>",
 	"enabled": true,
-	"effectiveUserId": "",
+	"effectiveUserId": "${apiUserId}",
 	"defaultAuthnMethod": "PKI_KEYS",
 	"authnCredential": {
-		"publicKey":"",
-		"privateKey":""
+		"publicKey":"<Enter Public Key one liner>",
+		"privateKey":"<Enter one liner private key>"
 	},
-	"rootDir": "",
+	"rootDir": "/",
 	"port": 22,
 	"canExec": true,
-	"jobRuntimes": [{"runtimeType": "DOCKER", "version": "0.0.1d"}],
+	"jobRuntimes": [{"runtimeType": "DOCKER", "version": "0.0.1"}],
 	"jobWorkingDir": "workdir"
 }

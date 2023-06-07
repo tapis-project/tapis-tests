@@ -20,43 +20,53 @@ tenant = 'dev'
 # ensure project_id is unique each time we execute the notebook to ensure no collisions
 time_stamp = str(datetime.datetime.today().isoformat()).replace(':', '_')
 time_stamp = time_stamp.replace('.', '')
+
+## variables for Streams tests
 project_id = 'wq_demo_tapis_proj1' + time_stamp
 site_id = 'wq_demo_site'
 instrument_id = 'Ohio_River_Robert_C_Byrd_Locks' + time_stamp
 channel_id = 'demo_wq_channel' + time_stamp
 template_id = 'demo_channel_template'
-new_id = "tapisv3-storage" + time_stamp
+
+## Variables for Systems tests
+new_system_id = "tapisv3-storage" + time_stamp
 new_root_dir = "/home/testuser2/" + time_stamp
-username = '<Enter Username>'
-password = '<Enter Password>'
+## This system already exists in the tenant
+existing_system_id="tapisv3-storage"
+## Tapis User credentials
+username = "testuser2"
+password = "testuser2"
+username2 = "testuser3"
+
+# Job variable
 job_uuid =''
-username2 = '<Enter another Username>'
+
+# App variable
 new_appid="tapisv3-app"+ time_stamp
+
 # Assign pod name to use.
 pod_id = "demopod"
 
+# Generate Tapis token for User1
 @pytest.fixture
 def client():
-    base_url = '<Enter Base url>'
-    username =  username
-    # account_type = getattr(conf, 'account_type', 'user')
-    # tenant_id = getattr(conf, 'tenant_id', 'dev')
-    # service_password = getattr(conf, 'service_password', None)
-    password = password
+    base_url = 'https://dev.develop.tapis.io'
+    #username = username
+    #password = password
     t = Tapis(base_url=base_url,
-              username=username,
-              password=password,
+              username="testuser2",
+              password="testuser2",
               spec_dir='home/tapis', download_latest_specs=True)
     t.get_tokens()
     print(t)
     return t
 
 
-
 # -----------------
 # tenants API tests -
 # -----------------
 
+# List tenants
 def test_tenants_list_tenants(client):
     tenants = client.tenants.list_tenants()
     for t in tenants:
@@ -66,7 +76,8 @@ def test_tenants_list_tenants(client):
         assert hasattr(t, 'token_service')
         assert hasattr(t, 'security_kernel')
 
-
+# List tenants by ID
+# These assertions will change as per tenant
 def test_tenants_get_tenant_by_id(client):
     t = client.tenants.get_tenant(tenant_id='dev')
     assert t.base_url == 'https://dev.develop.tapis.io'
@@ -75,7 +86,7 @@ def test_tenants_get_tenant_by_id(client):
     assert t.token_service == 'https://dev.develop.tapis.io/v3/tokens'
     assert t.security_kernel == 'https://dev.develop.tapis.io/v3/security'
 
-
+# List Owners
 def test_tenants_list_owners(client):
     owners = client.tenants.list_owners()
     for o in owners:
@@ -84,7 +95,8 @@ def test_tenants_list_owners(client):
         assert hasattr(o, 'last_update_time')
         assert hasattr(o, 'name')
 
-
+# Get owner 
+# assertions will change for specific email
 def test_tenants_get_owner(client):
     owner = client.tenants.get_owner(email='CICSupport@tacc.utexas.edu')
     assert owner.email == 'CICSupport@tacc.utexas.edu'
@@ -94,40 +106,40 @@ def test_tenants_get_owner(client):
 # ---------------------
 # Streams tests -
 # ---------------------
-
+# List Projects
 def test_streams_list_projects(client):
     result = client.streams.list_projects()
     assert 'active' in str(result)
 
-
+# Create Projects
 def test_streams_create_project(client):
     result = client.streams.create_project(project_name=project_id, description='project for integration tests',
-                                           owner=username, pi=username, funding_resource='tapis',
+                                           owner='testuser2', pi='testuser2', funding_resource='tapis',
                                            project_url='test.tacc.utexas.edu',
                                            active=True)
     assert hasattr(result, 'active')
     assert hasattr(result, 'project_id')
 
-
+# Get Project Details
 def test_streams_get_project(client):
     result = client.streams.get_project(project_id=project_id)
     assert hasattr(result, 'active')
     assert hasattr(result, 'project_id')
 
-
+# Create Site
 def test_streams_create_site(client):
     result = client.streams.create_site(project_id=project_id, request_body=[{"site_name":site_id, "site_id":site_id,
                                         "latitude":50, "longitude":10, "elevation":2, "description":"test_site"}])
     assert 'chords_id' in str(result)
     assert 'created_at' in str(result)
 
-
+# Get Site
 def test_streams_get_sites(client):
     result = client.streams.get_site(project_id=project_id, site_id=site_id)
     assert hasattr(result, 'chords_id')
     assert hasattr(result, 'created_at')
 
-
+# Create Instrument
 def test_streams_create_instrument(client):
     result = client.streams.create_instrument(project_id=project_id, site_id=site_id, request_body=[{"topic_category_id":"2", 
                                               "inst_name":instrument_id, "inst_description":"demo instrument",
@@ -136,42 +148,49 @@ def test_streams_create_instrument(client):
     assert 'inst_description' in str(result)
     assert 'inst_id' in str(result)
 
+# Get Instrument
 def test_streams_get_instruments(client):
     result = client.streams.get_instrument(project_id=project_id, site_id=site_id, inst_id=instrument_id)
     assert hasattr(result, 'chords_id')
     assert hasattr(result, 'created_at')
 
-
+# Create Variable
 def test_streams_create_variable(client):
     result = client.streams.create_variable(project_id=project_id, site_id=site_id, inst_id=instrument_id,request_body=[{"topic_category_id":"2",
                                              "var_name":"temperature", "shortname":"temp", "var_id":"temp"}])
     assert 'var_id' in str(result)
     assert 'var_name' in str(result)
 
+# Create Role
 def test_streams_list_roles(client):
     result = client.streams.list_roles(resource_id=project_id, user='testuser2',resource_type='project')
     assert 'admin' in str(result)
 
+# Grant Role
 def test_streams_grant_role(client):
     result = client.streams.grant_role(resource_id=project_id, user='testuser4',resource_type='project',role_name='manager')
     assert 'manager' in str(result)
 
+# Reboke Role
 def test_streams_revoke_role(client):
    result= client.streams.revoke_role(resource_id=project_id, user='testuser4', resource_type='project',role_name='manager')
    assert 'deleted' in str(result)
    
+# Delete Variable
 def test_streams_delete_variable(client):
     result = client.streams.delete_variable(project_id=project_id, site_id=site_id, inst_id=instrument_id, var_id='temp')
     assert 'var_id' in str(result)
     assert 'inst_chords_id' in str(result)
 
-
+# Delete Instrument
 def test_streams_delete_instruments(client):
     result = client.streams.delete_instrument(project_id=project_id, site_id=site_id, inst_id=instrument_id)
 
+# Delete Site
 def test_streams_delete_site(client):
     result = client.streams.delete_site(project_id=project_id, site_id=site_id)
 
+# Delete Project
 def test_streams_delete_project(client):
     result = client.streams.delete_project(project_id=project_id)
     assert 'tapis_deleted' in str(result)
@@ -180,25 +199,11 @@ def test_streams_delete_project(client):
 # ---------------------
 # Systems tests -
 # ---------------------
+
+# List Systems
 def test_systems_get_Systems(client):
     result = client.systems.getSystems()
     assert 'id' in str(result)
-
-
-def test_systems_get_System_details(client):
-    result = client.systems.getSystem(systemId='tapisv3-storage')
-    assert 'tapisv3-storage' in str(result)
-    assert 'owner' in str(result)
-
-
-def test_files_make_root_dir(client):
-    result = client.files.mkdir(systemId='tapisv3-storage', path=time_stamp)
-    assert 'success' in str(result)
-
-
-def test_systems_get_System_details(client):
-    result = client.systems.getSystem(systemId='tapisv3-storage')
-    assert hasattr(result, 'effectiveUserId')
 
 
 # Create System
@@ -209,17 +214,21 @@ def test_create_system(client):
             systemDef = json.load(f)
     except:
         printer("unable to open file")
-    systemDef.update({"id": new_id})
+    systemDef.update({"id": new_system_id})
     systemDef.update({"rootDir": new_root_dir})
     result1 = client.systems.createSystem(**systemDef)
     assert 'url' in str(result1)
 
 
-# Retrieve details for systems
-def test_systems_get_System_details2(client):
-    result = client.systems.getSystem(systemId=new_id)
-    assert new_id in str(result)
+# Get System details
+def test_systems_get_System_details(client):
+    result = client.systems.getSystem(systemId=new_system_id)
     assert 'owner' in str(result)
+
+# Make a root directory
+def test_files_make_root_dir(client):
+    result = client.files.mkdir(systemId=new_system_id, path=time_stamp)
+    assert 'success' in str(result)
 
 
 # Search systems by name
@@ -241,33 +250,33 @@ def test_systems_get_System_compute_total(client):
 
 # Get system permissions
 def test_systems_get_System_permissions_user(client):
-    result = client.systems.getUserPerms(systemId=new_id, userName=username)
+    result = client.systems.getUserPerms(systemId=new_system_id, userName=username)
     assert 'names' in str(result)
 
 
 # Grant system permissions to different user
 def test_systems_grant_System_permissions_user(client):
-    result = client.systems.grantUserPerms(systemId=new_id, userName=username2, permissions=['READ', 'MODIFY'])
+    result = client.systems.grantUserPerms(systemId=new_system_id, userName=username2, permissions=['READ', 'MODIFY'])
     assert 'SYSAPI_PERMS_GRANTED' in str(result)
 
 
 # Revoke system permissions of different user
 def test_systems_revoke_System_permissions_user(client):
-    result = client.systems.revokeUserPerms(systemId=new_id, userName=username2, permissions=['READ', 'MODIFY'])
+    result = client.systems.revokeUserPerms(systemId=new_system_id, userName=username2, permissions=['READ', 'MODIFY'])
     assert 'MODIFY' in str(result)
 
 
 # Check if all permissions have been revoked
 def test_systems_get_System_permissions_user2(client):
-    result = client.systems.getUserPerms(systemId=new_id, userName=username2)
+    result = client.systems.getUserPerms(systemId=new_system_id, userName=username2)
     assert result.names == []
 
-
+# Systems ready check
 def test_systems_readyCheck(client):
     result = client.systems.readyCheck()
     assert 'Ready' in str(result)
 
-
+# Systems health check
 def test_systems_healthCheck(client):
     result = client.systems.healthCheck()
     assert 'Health' in str(result)
@@ -290,8 +299,9 @@ def test_files_healthCheck(client):
 
 
 # List files
+# change the system name and path on existing system
 def test_files_list_files(client):
-    result = client.files.listFiles(systemId='tapisv3-exec2-test', path='/integration_tests')
+    result = client.files.listFiles(systemId=new_system_id, path='/')
     for p in result:
         assert hasattr(p, 'lastModified')
         assert hasattr(p, 'path')
@@ -299,8 +309,7 @@ def test_files_list_files(client):
 
 # Get files content
 def test_files_get_file_contents(client):
-    result = client.files.getContents(systemId='tapisv3-exec2-test', path='/integration_tests/test.out')
-    assert 'test' in str(result)
+    result = client.files.getContents(systemId=new_system_id, path='/')
 
 # Delete file
 #def test_files_delete(client):
@@ -309,11 +318,14 @@ def test_files_get_file_contents(client):
 
 
 def test_files_make_filestest_dir(client):
-    result = client.files.mkdir(systemId='tapisv3-exec2-test', path='/filetest')
+    result = client.files.mkdir(systemId=new_system_id, path='/filetest')
     assert 'success' in str(result)
 
 
+'''
+These tests need specific path on the systems to move and copy file
 # Move file
+
 def test_files_move(client):
     result = client.files.moveCopy(systemId='tapisv3-exec2-test', path='/integration_tests/test.out',
                                          newPath='/filetest/test.out',
@@ -344,7 +356,7 @@ def test_files_create_get_TransferTask(client):
     result = client.files.getTransferTaskDetails(transferTaskId=uuid)
     assert 'id' in str(result)
 
-
+'''
 #def test_cleanup_files_systems(client):
  #   result = client.files.delete(systemId='tapisv3-storage', path=time_stamp)
  #   assert 'success' in str(result)
@@ -404,10 +416,9 @@ def test_apps_create_app(client):
     with open('app.json', 'r') as f:
         appDef = json.load(f)
         appDef.update({"id": new_appid})
-        appDef["jobAttributes"].update({"execSystemId": new_id})
+        appDef["jobAttributes"].update({"execSystemId": new_system_id})
     result = client.apps.createAppVersion(**appDef)
     assert new_appid in str(result)
-
 
 
 # Search app list query parameters limit
@@ -479,7 +490,7 @@ def test_apps_readycheck(client):
 # Jobs tests
 # ---------------------
 def test_submit_job(client):
-    result = client.jobs.submitJob(name='Test_app', appId='test_app', appVersion='0.0.1',
+    result = client.jobs.submitJob(name='Test_app', appId=new_appid, appVersion='0.0.1',
                                    parameterSet={"envVariables": [{"key": "JOBS_PARMS", "value": "15"}],
                                                  "archiveFilter": {"includes": ["Sleep*"], "includeLaunchFiles": True}},
                                    archiveSystemId='<Enter archive system')
@@ -521,10 +532,6 @@ def test_jobs_ready(client):
     assert 'queueAccess: True' in str(result)
     assert 'tenantsAccess: True' in str(result)
 
-
-# ---------------------
-# Notifications tests -
-# ---------------------
 
 # ---------------------
 # Pods tests -
@@ -584,15 +591,10 @@ def test_authenticator_list_clients(client):
 # Tokens tests -
 # ---------------------
 def test_system_removeCredentials(client):
-    result = client.systems.removeUserCredential(systemId=new_id,userName='testuser2')
+    result = client.systems.removeUserCredential(systemId=new_system_id,userName=username)
     
 
 def test_system_delete(client):
-    result = client.systems.deleteSystem(systemId=new_id)
-
-
-# ---------------------
-# PgREST tests -
-# ---------------------
+    result = client.systems.deleteSystem(systemId=new_system_id)
 
 

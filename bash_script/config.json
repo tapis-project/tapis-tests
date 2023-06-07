@@ -1,14 +1,22 @@
 {
-       "dev":{
-            "base_url":"https://dev.test.tapis.io",
-            "pass":"",
-            "user":"",
-            "tenant":"test",
-            "service_pass":"",
-            "db":"StreamsTestDB",
-            "streams_pass":"",
-            "system":"tapisv3-exec-testuser2-1"
+     "dev":{
 
-       }
+          "base_url":"<Enter tenant base url example: https://dev.tenants.develop.tapis.io>",
+          "admin_base_url":"<Enter admin tenant base url https://admin.develop.tapis.io>",
+          "pass":"<Enter password of user for which jwt token should be generated, example:testuser>",
+          "user":"<Enter username for which jwt token should be generated, example: testuser>",
+          "systemId":"<System Id for needed for files listing test. This system should be created prior to running tests>",
+          "streams_service_pass":"<To run metadata tests>",
+          "db":"<To list collections for metadata tests>",
+          "appId":"<App Id for getting app details. This app should be registered prior to running smoke tests>",
+          "group_id":"<For Workflows test>",
+          "identity_uuid":"<For Workflows test>",
+          "pipline_id":"<For Workflows test>",
+          "task_id":"<For Workflows test>",
+          "archive_id":"<For Workflows test>",
+          "client_id":"<For Workflows test>"
+
+     }
+
 }
 

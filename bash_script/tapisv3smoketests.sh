@@ -22,19 +22,18 @@ Examples:
 
 
 "
-
+# Service token is only needed for running Streams API tests
 function service_token_generation( ) {
 	payload="{\"token_tenant_id\": \"admin\", \"account_type\":\"service\" , \"token_username\": \"streams\" , \"target_site_id\": \"tacc\" }"
-	RESULT=`curl -u "streams:$streams_pass" -H "Content-type: application/json"  -d "$payload" $admin_base_url/v3/tokens 2>/dev/null`
+	RESULT=`curl -u "streams:$streams_service_pass" -H "Content-type: application/json"  -d "$payload" $admin_base_url/v3/tokens 2>/dev/null`
 	service_token=`echo $RESULT | jq -r '.result.access_token.access_token'`
   if [ $service_token = 'null' ]; then
 		echo "Service token generation failed for streams in tenant admin"
 		break
 	fi
 			
-	
-}
 
+}
 
 ###: Function to load configurations per tenant
 function load_config ( ) {
@@ -44,20 +43,28 @@ function load_config ( ) {
       base_url=`echo $CONFIG | jq -r '.dev.base_url'`
       pass=`echo $CONFIG | jq -r '.dev.pass'`
       user=`echo $CONFIG | jq -r '.dev.user'`
-      service_pass=`echo $CONFIG | jq -r '.dev.service_pass'`
-      db=`echo $CONFIG | jq -r '.dev.db'`
-      streams_pass=`echo $CONFIG | jq -r '.dev.streams_pass'`
-      tenant=`echo $CONFIG | jq -r '.dev.tenant'`
-      admin_base_url=`echo $CONFIG | jq -r '.dev.admin_base'`
-      system=`echo $CONFIG | jq -r '.dev.system'`
+      system=`echo $CONFIG | jq -r '.dev.systemId'`
+	  app=`echo $CONFIG | jq -r '.dev.appId'`
 
+	  ### Comment these configs of not running Metadata tests
+	  streams_service_pass=`echo $CONFIG | jq -r '.dev.streams_service_pass'`
+	  db=`echo $CONFIG | jq -r '.dev.db'`
+	  admin_base_url=`echo $CONFIG | jq -r '.dev.admin_base_url'`
+
+	  ### Comment these configs if not running workflows tests
+	  group_id=`echo $CONFIG | jq -r '.dev.group_id'`
+	  identity_uuid=`echo $CONFIG | jq -r '.dev.identity_uuid'`
+	  pipline_id=`echo $CONFIG | jq -r '.dev.pipline_id"'`
+	  task_id=`echo $CONFIG | jq -r '.dev.task_id"'`
+	  archive_id=`echo $CONFIG | jq -r '.dev.archive_id"'`
+	  client_id=`echo $CONFIG | jq -r '.dev.client_id"'`
       ;;
 
 	*)
 		echo "  "
 		echo "**********************************************************"
 		echo " "
-		echo "Please enter a valid tenant name: dev all"
+		echo "Please enter a valid tenant name: dev"
 		echo " "
 		echo "**********************************************************"
 		break
@@ -510,17 +517,17 @@ function smoke_tests() {
 				echo "FAIL"
 			fi
 			echo "------ "
-			#echo "Get System details"
-			##RESULT=`curl -o /dev/null -w '%{http_code}' -H "$header" $base_url/v3/systems/$system 2>/dev/null`
-			#echo $RESULT
-      #      num_of_tests=$((num_of_tests+1))
-      #      if [ $RESULT = '200' ]; then
-      #      	num_of_tests_pass=$((num_of_tests_pass+1))
-      #      	echo "PASS"
-			#else
-			#	num_of_tests_fail=$((num_of_tests_fail+1))
-			#		echo "FAIL"
-			#fi
+			echo "Get System details"
+			RESULT=`curl -o /dev/null -w '%{http_code}' -H "$header" $base_url/v3/systems/$system 2>/dev/null`
+		    echo $RESULT
+            num_of_tests=$((num_of_tests+1))
+            if [ $RESULT = '200' ]; then
+            	num_of_tests_pass=$((num_of_tests_pass+1))
+            	echo "PASS"
+			else
+				num_of_tests_fail=$((num_of_tests_fail+1))
+					echo "FAIL"
+			fi
 			echo "------"
 			echo "Test: Healthcheck"
 			RESULT=`curl -o /dev/null -w '%{http_code}' $base_url/v3/systems/healthcheck 2>/dev/null`
@@ -846,7 +853,7 @@ function parse_args() {
 				#echo "####################################################################"
 
 				if [ $core_service != 'all' ]; then
-	         	   smoke_tests $core_service, $num_of_tests_pass, $num_of_tests_fail, $num_of_tests, $tenant_name, $user_token, $service_token, $tenant, $auth_user, $auth_base, $auth_pass, $admin_base_url, $system, $channel, $jenkins, $app
+	         	   smoke_tests $core_service, $num_of_tests_pass, $num_of_tests_fail, $num_of_tests, $tenant_name, $user_token, $service_token, $tenant, $system, $app
 
 					###: Run Smokes for all services
 				elif [ $core_service = 'all' ]; then
@@ -857,7 +864,7 @@ function parse_args() {
 					for i in "${Services[@]}"
 					do	
 						core_service=$i
-						smoke_tests $core_service, $total_core_test, $total_core_pass, $total_core_fail, $flag_tests_fail, $tenant_name, $tenant, $auth_user, $auth_base, $auth_pass, $admin_base_url, $channel, $system, $jenkins, $app, $user_token
+						smoke_tests $core_service, $total_core_test, $total_core_pass, $total_core_fail, $flag_tests_fail, $tenant_name, $tenant, $system, $app, $user_token
 
 			       	done
 			       	core_service="all"
