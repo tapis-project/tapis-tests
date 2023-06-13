@@ -1,6 +1,6 @@
 # tapis-tests
 This repository contains test suites that can be used to validate a Tapis installation.
-There are three types of tests included in each of the subdirectories.
+There are two types of tests included in each of the subdirectories.
 
 1. ``smoke_tests`` -- This folder contains "smoke tests", i.e., basic checks of the functionality of each service. The tests are written in BASH and utilize the ``curl``  HTTP client. This approach minimizes dependencies of the tests themselves (e.g., these tests do not depend on a Python installation, the Tapis Python SDK, tapipy, or other libraries). To use these tests, simply update the config file and execute the bash script. There is also a Dockerfile included to allow for executing the tests in a container.
 
