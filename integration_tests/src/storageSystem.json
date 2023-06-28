@@ -2,14 +2,11 @@
 	"id": "test-system-id",
 	"description": "Systems for testing jobs",
 	"systemType": "LINUX",
-	"host": "<Enter IP address of virtual machine>",
+	"host": "52.9.136.88",
 	"enabled": true,
-	"effectiveUserId": "${apiUserId}",
+	"effectiveUserId": "ubuntu",
 	"defaultAuthnMethod": "PKI_KEYS",
-	"authnCredential": {
-		"publicKey":"<Enter Public Key one liner>",
-		"privateKey":"<Enter one liner private key>"
-	},
+	"authnCredential": {},
 	"rootDir": "/",
 	"port": 22,
 	"canExec": true,
