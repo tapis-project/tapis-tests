@@ -187,12 +187,7 @@ def test_systems_get_System_details(client):
 
 # Make a directory
 def test_files_make_dir(client):
-    try:
-        result = client.files.mkdir(systemId=new_system_id, path=time_stamp)
-    except Exception as e:
-        print("test_files_make_root_dir")
-        print(e)
-        raise e
+    result = client.files.mkdir(systemId=new_system_id, path=time_stamp)
     assert 'success' in str(result)
 
 # Search systems by name
@@ -267,40 +262,25 @@ def test_files_healthCheck(client):
 
 # Upload file
 def test_files_upload(client):
-    try:
-        client.upload(source_file_path='sample.txt',
-                    system_id=new_system_id, dest_file_path='/sample.txt')
-        result = client.files.getContents(
-            systemId=new_system_id, path='/sample.txt')
-        assert 'test' in str(result)
-    except Exception as e:
-        print("test_files_upload")
-        print(e)
-        raise e
+    client.upload(source_file_path='sample.txt',
+                system_id=new_system_id, dest_file_path='/sample.txt')
+    result = client.files.getContents(
+        systemId=new_system_id, path='/sample.txt')
+    assert 'test' in str(result)
 
 
 # List files
 # change the system name and path on existing system
 def test_files_list_files(client):
-    try:
-        result = client.files.listFiles(systemId=new_system_id, path='/')
-        for p in result:
-            assert hasattr(p, 'lastModified')
-            assert hasattr(p, 'path')
-    except Exception as e:
-        print("test_files_list_files")
-        print(e)
-        raise e
+    result = client.files.listFiles(systemId=new_system_id, path='/')
+    for p in result:
+        assert hasattr(p, 'lastModified')
+        assert hasattr(p, 'path')
 
 
 # Get files content
 def test_files_get_file_contents(client):
-    try:
-        result = client.files.getContents(systemId=new_system_id, path='/', zip=True)
-    except Exception as e:
-        print("test_files_get_file_contents")
-        print(e)
-        raise e
+    result = client.files.getContents(systemId=new_system_id, path='/', zip=True)
     result = client.files.getContents(
             systemId=new_system_id, path='/sample.txt')
     assert 'test' in str(result)
@@ -312,54 +292,29 @@ def test_files_get_file_contents(client):
 
 
 def test_files_make_filestest_dir(client):
-    try:
-        result = client.files.mkdir(systemId=new_system_id, path='/filetest')
-    except Exception as e:
-        print("test_files_make_filestest_dir")
-        print(e)
-        raise e
+    result = client.files.mkdir(systemId=new_system_id, path='/filetest')
     assert 'success' in str(result)
 
 
 # Move file
 def test_files_move(client):
-    try:
-        result = client.files.moveCopy(systemId=new_system_id, path='/sample.txt',
-                                    newPath='/filetest/test.out',
-                                    operation='MOVE')
-    except Exception as e:
-        print("test_files_move")
-        print(e)
-        raise e
+    result = client.files.moveCopy(systemId=new_system_id, path='/sample.txt',
+                                newPath='/filetest/test.out',
+                                operation='MOVE')
     assert 'success' in str(result)
-    try:
-        result = client.files.getContents(
-            systemId=new_system_id, path='/filetest/test.out')
-    except Exception as e:
-        print("test_files_move:test_files_get_file_contents")
-        print(e)
-        raise e
+    result = client.files.getContents(
+        systemId=new_system_id, path='/filetest/test.out')
     assert 'test' in str(result)
 
 
 # Copy File
 def test_files_copy(client):
-    try:
-        result = client.files.moveCopy(systemId=new_system_id, path='/filetest/test.out',
-                                    newPath='/sample.txt',
-                                    operation='COPY')
-    except Exception as e:
-        print("test_files_copy")
-        print(e)
-        raise e
+    result = client.files.moveCopy(systemId=new_system_id, path='/filetest/test.out',
+                                newPath='/sample.txt',
+                                operation='COPY')
     assert 'success' in str(result)
-    try:
-        result = client.files.getContents(
-            systemId=new_system_id, path='/sample.txt')
-    except Exception as e:
-        print("test_files_copy:test_files_get_file_contents")
-        print(e)
-        raise e
+    result = client.files.getContents(
+        systemId=new_system_id, path='/sample.txt')
     assert 'test' in str(result)
 
 
@@ -388,13 +343,8 @@ def test_files_copy(client):
 
 
 def test_postits_createPostIt_redeem(client):
-    try:
-        result = client.files.createPostIt(
-            systemId=new_system_id, path='/sample.txt', allowedUses=2)
-    except Exception as e:
-        print("test_postits_createPostIt_redeem")
-        print(e)
-        raise e
+    result = client.files.createPostIt(
+        systemId=new_system_id, path='/sample.txt', allowedUses=2)
 
     assert 'allowedUses' in str(result)
     assert 'created' in str(result)
@@ -402,23 +352,13 @@ def test_postits_createPostIt_redeem(client):
     result = tapisresult_to_json_serializer(result)
     postitId = result['id']
 
-    try:
-        result = client.files.redeemPostIt(postitId=postitId)
-    except Exception as e:
-        print("test_postits_createPostIt_redeem2")
-        print(e)
-        raise e
+    result = client.files.redeemPostIt(postitId=postitId)
 
     assert 'This' in str(result)
 
 
 def test_postits_list_postits(client):
-    try:
-        result = client.files.listPostIts()
-    except Exception as e:
-        print("test_postits_list_postits")
-        print(e)
-        raise e
+    result = client.files.listPostIts()
     assert 'allowedUses' in str(result)
     assert 'expiration' in str(result)
 
@@ -426,27 +366,12 @@ def test_postits_list_postits(client):
 
 
 def test_postits_getPostIt(client):
-    try:
-        result_list = client.files.listPostIts()
-    except Exception as e:
-        print("test_postits_getPostIt")
-        print(e)
-        raise e
+    result_list = client.files.listPostIts()
     postitId = result_list[0].id
-    try:
-        result = client.files.getPostIt(postitId=postitId)
-    except Exception as e:
-        print("test_postits_getPostIt2")
-        print(e)
-        raise e
+    result = client.files.getPostIt(postitId=postitId)
     assert 'allowedUses' in str(result)
     assert 'created' in str(result)
-    try:
-        result = client.files.deletePostIt(postitId=postitId)
-    except Exception as e:
-        print("test_postits_getPostIt3")
-        print(e)
-        raise e
+    result = client.files.deletePostIt(postitId=postitId)
     assert 'changes' in str(result)
 
 # ---------------------
@@ -470,12 +395,7 @@ def test_apps_create_app(client):
 
 
 def test_apps_retieve_apps(client):
-    try:
-        result = client.apps.getApps()
-    except Exception as e:
-        print("test_apps_retieve_apps")
-        print(e)
-        raise e
+    result = client.apps.getApps()
     assert 'id' in str(result)
     assert 'owner' in str(result)
 
@@ -550,32 +470,22 @@ def test_apps_readycheck(client):
 # Jobs tests
 # ---------------------
 def test_submit_job(client):
-    try:
-        result = client.jobs.submitJob(name='Test_app', appId=new_appid, appVersion='0.1',
+    result = client.jobs.submitJob(name='Test_app', appId=new_appid, appVersion='0.1',
                                     parameterSet={"envVariables": [{"key": "JOBS_PARMS", "value": "15"}],
                                                     "archiveFilter": {"includes": ["Sleep*"], "includeLaunchFiles": True}})
                                     #    archiveSystemId='<Enter archive system')
-    except Exception as e:
-        print("test_submit_job")
-        print(e)
-        raise e
-    print(result)
     assert 'uuid' in str(result)
     assert 'PENDING' in str(result)
     job_uuid = result.uuid
     result = client.jobs.getJob(jobUuid=job_uuid)
-    print(result)
     assert job_uuid == result.uuid
-    time.sleep(100)
+    time.sleep(100) # wait for job to complete
     status = client.jobs.getJobStatus(jobUuid=job_uuid)
-    print(status)
     assert 'status' in str(status)
     history = client.jobs.getJobHistory(jobUuid=job_uuid)
-    print(history)
     assert 'newJobStatus' in str(history)
     assert 'created' in str(history)
     output_list = client.jobs.getJobOutputList(jobUuid=job_uuid, outputPath='/')
-    print(output_list)
     assert 'tapisjob.sh' in str(output_list)
     assert 'nativePermissions' in str(output_list)
     result = client.jobs.getJobOutputDownload(jobUuid=job_uuid, outputPath='/')
