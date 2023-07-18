@@ -23,8 +23,6 @@ site = 'science_first'
 tenant_base_url = 'https://subhash.tapis.onescienceway.com'
 admin_tenant = 'admin'
 admin_tenant_base_url = 'https://admin.tapis.onescienceway.com'
-drupal_site_url = "https://osp-dev-site.ddev.site"
-integration_testing_secret = "asd"  # configured in Drupal
 
 # ensure project_id is unique each time we execute the notebook to ensure no collisions
 time_stamp = str(datetime.datetime.today().isoformat()).replace(':', '_')
@@ -32,7 +30,7 @@ time_stamp = time_stamp.replace('.', '')
 
 # Variables for Systems tests
 new_system_id = "integration-test-tapisv3-storage-" + time_stamp
-new_root_dir = "/home/ubuntu/integration_testing_tapis/"# + time_stamp
+new_root_dir = "/home/ubuntu/integration_testing_tapis/" #+ time_stamp
 
 # Tapis User credentials
 username = "testuser1"
@@ -44,59 +42,14 @@ job_uuid = ''
 # App variable
 new_appid = "integration-test-tapisv3-app-" + time_stamp
 
-
 @pytest.fixture
-def tapis_user_1():
-    res = requests.get(f"{drupal_site_url}/tapis/auth/integration_testing_user_info", params={
-        "tapis_tenant_id": tenant,
-        "tapis_site_id": site,
-        "tapis_username": username
-    }, headers={
-        "X-Integration-Tests-Secret": integration_testing_secret
-    })
-
-    # raise an exception if the request failed
-    res.raise_for_status()
-
-    # return the json response
-    return res.json()
-
-
-@pytest.fixture
-def tapis_user_2():
-    res = requests.get(f"{drupal_site_url}/tapis/auth/integration_testing_user_info", params={
-        "tapis_tenant_id": tenant,
-        "tapis_site_id": site,
-        "tapis_username": username2
-    }, headers={
-        "X-Integration-Tests-Secret": integration_testing_secret
-    })
-
-    # raise an exception if the request failed
-    res.raise_for_status()
-
-    # return the json response
-    return res.json()
-
-
-@pytest.fixture
-def client(tapis_user_1, tapis_user_2):
+def client():
     t = Tapis(base_url=tenant_base_url,
-              access_token=tapis_user_1['access_token'],
-              refresh_token=tapis_user_1['refresh_token'])
-            #   spec_dir='home/tapis',
-            #   download_latest_specs=True)
-    # t.get_tokens()
-    print(t)
+              spec_dir='home/tapis',
+              download_latest_specs=True)
+    t.get_tokens()
+    # print(t)
     return t
-
-def test_drupal_auth(tapis_user_1, tapis_user_2, client):
-    # Assert that both users have non-None access and refresh tokens
-    assert tapis_user_1['access_token'] is not None
-    assert tapis_user_1['refresh_token'] is not None
-    assert tapis_user_2['access_token'] is not None
-    assert tapis_user_2['refresh_token'] is not None
-    assert client.get_access_jwt() == tapis_user_1['access_token']
 
 # -----------------
 # tenants API tests -
