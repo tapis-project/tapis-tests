@@ -18,11 +18,11 @@ import io
 # mylogger = logging.getLogger()
 
 
-tenant = 'subhash'
-site = 'science_first'
-tenant_base_url = 'https://subhash.tapis.onescienceway.com'
-admin_tenant = 'admin'
-admin_tenant_base_url = 'https://admin.tapis.onescienceway.com'
+tenant = '<tenant id>'
+site = '<site id>'
+tenant_base_url = '<url>'
+admin_tenant = '<admin tenant id>'
+admin_tenant_base_url = '<url>'
 
 # ensure project_id is unique each time we execute the notebook to ensure no collisions
 time_stamp = str(datetime.datetime.today().isoformat()).replace(':', '_')
@@ -30,7 +30,7 @@ time_stamp = time_stamp.replace('.', '')
 
 # Variables for Systems tests
 new_system_id = "integration-test-tapisv3-storage-" + time_stamp
-new_root_dir = "/home/ubuntu/integration_testing_tapis/" #+ time_stamp
+new_root_dir = "/home/ubuntu/integration_testing_tapis/"
 
 # Tapis User credentials
 username = "testuser1"
