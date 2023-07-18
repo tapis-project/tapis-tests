@@ -28,9 +28,16 @@ admin_tenant_base_url = '<url>'
 time_stamp = str(datetime.datetime.today().isoformat()).replace(':', '_')
 time_stamp = time_stamp.replace('.', '')
 
+## variables for Streams tests
+project_id = 'wq_demo_tapis_proj1' + time_stamp
+site_id = 'wq_demo_site'
+instrument_id = 'Ohio_River_Robert_C_Byrd_Locks' + time_stamp
+channel_id = 'demo_wq_channel' + time_stamp
+template_id = 'demo_channel_template'
+
 # Variables for Systems tests
 new_system_id = "integration-test-tapisv3-storage-" + time_stamp
-new_root_dir = "/home/ubuntu/integration_testing_tapis/"
+new_root_dir = "/home/ubuntu/integration_testing_tapis/" #+ time_stamp
 
 # Tapis User credentials
 username = "testuser1"
@@ -41,6 +48,9 @@ job_uuid = ''
 
 # App variable
 new_appid = "integration-test-tapisv3-app-" + time_stamp
+
+# Assign pod name to use.
+pod_id = "demopod"
 
 @pytest.fixture
 def client():
@@ -90,13 +100,105 @@ def test_tenants_list_owners(client):
 
 # Get owner
 # assertions will change for specific email
+def test_tenants_get_owner(client):
+    owner = client.tenants.get_owner(email='CICSupport@tacc.utexas.edu')
+    assert owner.email == 'CICSupport@tacc.utexas.edu'
+    assert owner.name == 'CIC Support'
 
 
-# TODO: who is the owner of the tenant in our setup?
-# def test_tenants_get_owner(client):
-#     owner = client.tenants.get_owner(email='CICSupport@tacc.utexas.edu')
-#     assert owner.email == 'CICSupport@tacc.utexas.edu'
-#     assert owner.name == 'CIC Support'
+# ---------------------
+# Streams tests -
+# ---------------------
+# List Projects
+def test_streams_list_projects(client):
+    result = client.streams.list_projects()
+    assert 'active' in str(result)
+
+# Create Projects
+def test_streams_create_project(client):
+    result = client.streams.create_project(project_name=project_id, description='project for integration tests',
+                                           owner='testuser2', pi='testuser2', funding_resource='tapis',
+                                           project_url='test.tacc.utexas.edu',
+                                           active=True)
+    assert hasattr(result, 'active')
+    assert hasattr(result, 'project_id')
+
+# Get Project Details
+def test_streams_get_project(client):
+    result = client.streams.get_project(project_id=project_id)
+    assert hasattr(result, 'active')
+    assert hasattr(result, 'project_id')
+
+# Create Site
+def test_streams_create_site(client):
+    result = client.streams.create_site(project_id=project_id, request_body=[{"site_name":site_id, "site_id":site_id,
+                                        "latitude":50, "longitude":10, "elevation":2, "description":"test_site"}])
+    assert 'chords_id' in str(result)
+    assert 'created_at' in str(result)
+
+# Get Site
+def test_streams_get_sites(client):
+    result = client.streams.get_site(project_id=project_id, site_id=site_id)
+    assert hasattr(result, 'chords_id')
+    assert hasattr(result, 'created_at')
+
+# Create Instrument
+def test_streams_create_instrument(client):
+    result = client.streams.create_instrument(project_id=project_id, site_id=site_id, request_body=[{"topic_category_id":"2", 
+                                              "inst_name":instrument_id, "inst_description":"demo instrument",
+                                              "inst_id":instrument_id}])
+
+    assert 'inst_description' in str(result)
+    assert 'inst_id' in str(result)
+
+# Get Instrument
+def test_streams_get_instruments(client):
+    result = client.streams.get_instrument(project_id=project_id, site_id=site_id, inst_id=instrument_id)
+    assert hasattr(result, 'chords_id')
+    assert hasattr(result, 'created_at')
+
+# Create Variable
+def test_streams_create_variable(client):
+    result = client.streams.create_variable(project_id=project_id, site_id=site_id, inst_id=instrument_id,request_body=[{"topic_category_id":"2",
+                                             "var_name":"temperature", "shortname":"temp", "var_id":"temp"}])
+    assert 'var_id' in str(result)
+    assert 'var_name' in str(result)
+
+# Create Role
+def test_streams_list_roles(client):
+    result = client.streams.list_roles(resource_id=project_id, user='testuser2',resource_type='project')
+    assert 'admin' in str(result)
+
+# Grant Role
+def test_streams_grant_role(client):
+    result = client.streams.grant_role(resource_id=project_id, user='testuser4',resource_type='project',role_name='manager')
+    assert 'manager' in str(result)
+
+# Reboke Role
+def test_streams_revoke_role(client):
+   result= client.streams.revoke_role(resource_id=project_id, user='testuser4', resource_type='project',role_name='manager')
+   assert 'deleted' in str(result)
+
+# Delete Variable
+def test_streams_delete_variable(client):
+    result = client.streams.delete_variable(project_id=project_id, site_id=site_id, inst_id=instrument_id, var_id='temp')
+    assert 'var_id' in str(result)
+    assert 'inst_chords_id' in str(result)
+
+# Delete Instrument
+def test_streams_delete_instruments(client):
+    result = client.streams.delete_instrument(project_id=project_id, site_id=site_id, inst_id=instrument_id)
+
+# Delete Site
+def test_streams_delete_site(client):
+    result = client.streams.delete_site(project_id=project_id, site_id=site_id)
+
+# Delete Project
+def test_streams_delete_project(client):
+    result = client.streams.delete_project(project_id=project_id)
+    assert 'tapis_deleted' in str(result)
+    assert 'project_id' in str(result)
+
 
 # ---------------------
 # Systems tests -
@@ -328,6 +430,15 @@ def test_postits_getPostIt(client):
     assert 'changes' in str(result)
 
 # ---------------------
+# Actors tests 
+# ---------------------
+def test_actors_list_actors(client):
+    result = client.actors.list_actors()
+    assert 'status' in str(result)
+    assert 'name' in str(result)
+    # assert len(result) == 0
+
+# ---------------------
 # Apps tests
 # ---------------------
 
@@ -476,6 +587,59 @@ def test_apps_delete(client):
     result = client.apps.deleteApp(appId=new_appid)
     assert '1' in str(result)
 
+
+# ---------------------
+# Pods tests -
+# ---------------------
+def test_get_pods(client):
+    result = client.pods.get_pods()
+
+def test_create_pods(client):
+    result = client.pods.create_pod(pod_id=pod_id, pod_template="neo4j")
+    assert 'url' in str(result)
+    assert 'demopod' in str(result)
+
+def test_get_pods_withid(client):
+    result = client.pods.get_pod(pod_id='demopod')
+    assert 'demopod' in str(result)
+    assert 'neo4j' in str(result)
+
+def test_get_pod_permissions(client):
+    result = client.pods.get_pod_permissions(pod_id=pod_id)
+    assert 'permissions:' in str(result)
+
+def test_set_pod_permissions(client):
+    result = client.pods.set_pod_permission(pod_id=pod_id, user='testuser', level='ADMIN')
+    assert 'permissions:' in str(result)
+    assert 'testuser:ADMIN' in str(result)
+
+def test_get_pod_permissions(client):
+    result = client.pods.get_pod_permissions(pod_id=pod_id, user='testuser', level='ADMIN')
+    assert 'testuser:ADMIN' in str(result)
+
+def test_get_pod_logs(client):
+    result = client.pods.get_pod_logs(pod_id=pod_id)
+    assert 'logs' in str(result)
+
+def test_delete_pods(client):
+    result = client.pods.delete_pod(pod_id=pod_id, pod_template="neo4j")
+    assert 'message' in str(result)
+
+
+
+# ---------------------
+# Authenticator tests -
+# ---------------------
+def test_authenticator_hello(client):
+    result = client.authenticator.hello()
+    assert 'Hello' in str(result)
+
+def test_authenticator_ready(client):
+    result = client.authenticator.ready()
+    assert 'ready' in str(result)
+
+def test_authenticator_list_clients(client):
+    result= client.authenticator.list_clients()
 
 # ---------------------
 # Tokens tests -

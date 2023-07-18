@@ -2,7 +2,7 @@
 	"id": "test-system-id",
 	"description": "Systems for testing jobs",
 	"systemType": "LINUX",
-	"host": "52.9.136.88",
+	"host": "<ip address>",
 	"enabled": true,
 	"effectiveUserId": "ubuntu",
 	"defaultAuthnMethod": "PKI_KEYS",
